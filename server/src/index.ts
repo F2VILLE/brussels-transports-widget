@@ -5,7 +5,7 @@ import applyRoutes from "./routes"
 const app = express()
 const port = process.env.PORT || 3000
 
-app.use("*", (req,res,next) => {
+app.use((req,res,next) => {
     res.setHeader("Access-Control-Allow-Origin", "*")
     next()
 })
