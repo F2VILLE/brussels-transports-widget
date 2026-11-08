@@ -13,6 +13,7 @@ const stib = new STIB_MIVB({
 const Query = z.object({
     lat: z.coerce.number().min(-90).max(90),
     lon: z.coerce.number().min(-180).max(180),
+    distance: z.coerce.number().min(1).max(1000).optional()
 })
 
 type Arrival = Awaited<ReturnType<STIB_MIVB["getLinesFromStop"]>>[number];
@@ -21,17 +22,20 @@ router.get("/", async (req, res) => {
     const parsed = Query.safeParse(req.query)
     if (!parsed.success)
         return res.status(400).json({ error: z.flattenError(parsed.error).fieldErrors });
-    const { lat, lon } = parsed.data
+    const { lat, lon, distance } = parsed.data
     try {
         const stops = await stib.getStopsCloseTo({
-            lat, lon
+            lat, lon, distance
         })
-        console.log(stops)
         const lines: Record<string, Arrival[]> = {};
         for (const stop of stops) {
             const l = await stib.getLinesFromStop(stop);
             (lines[stop.name.fr] ??= []).push(...l);
-        } return res.json({
+        }
+        return res.json({
+            lat,
+            lon,
+            distance,
             stops,
             lines
         })

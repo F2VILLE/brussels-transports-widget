@@ -34,8 +34,16 @@ const API_PATH = {
 }
 
 function proximityFilter(n1: number, n2: number, treshold = 0.001) {
-    console.log(`[Proximity] checking [${n1}] and [${n2}] => ${n1 - n2}`)
+    // console.log(`[Proximity] checking [${n1}] and [${n2}] => ${n1 - n2}`)
     return Math.abs(n1 - n2) <= treshold
+}
+
+const METERS_PER_DEGREE_LAT = 111_320;
+
+function distanceToLatLonThreshold(distance: number, latitude: number) {
+    const latThreshold = distance / METERS_PER_DEGREE_LAT;
+    const lonThreshold = distance / (METERS_PER_DEGREE_LAT * Math.cos(latitude * Math.PI / 180));
+    return { latThreshold, lonThreshold };
 }
 
 const parse = <T>(v: unknown): T => (typeof v === "string" ? JSON.parse(v) : v) as T;
@@ -94,24 +102,27 @@ class STIB_MIVB {
         return stops
     }
 
-    async getStopsCloseTo(loc: { lat: number, lon: number }): Promise<STIB_MIVB_Stop[]> {
+    async getStopsCloseTo(loc: { lat: number, lon: number, distance?: number | undefined }): Promise<STIB_MIVB_Stop[]> {
+        const { latThreshold, lonThreshold } = distanceToLatLonThreshold(loc.distance || parseInt(process.env.DEFAULT_DISTANCE_TRESHOLD || "0") || 100, loc.lat)
         const stops = await this.fetchStops()
         return (stops.filter(x => (
-            proximityFilter(x.gpscoordinates.latitude, loc.lat)
+            proximityFilter(x.gpscoordinates.latitude, loc.lat, latThreshold)
             &&
-            proximityFilter(x.gpscoordinates.longitude, loc.lon)
+            proximityFilter(x.gpscoordinates.longitude, loc.lon, lonThreshold)
         )))
     }
 
     async fetchWaitingTimes(): Promise<STIB_MIVB_WaitingTime[]> {
         if (Date.now() - this.waitingLastFetched < 20_000) return this.waiting;
-        const rows = await this.fetchAll(API_BASE_URL + API_PATH.waitingTimes);
-        this.waiting = rows.map(r => ({
-            pointid: String(r.pointid),
-            lineid: String(r.lineid),
-            passingtimes: parse<STIB_MIVB_Passing[]>(r.passingtimes) ?? [],
-        }));
-        this.waitingLastFetched = Date.now();
+        this.fetchAll(API_BASE_URL + API_PATH.waitingTimes)
+            .then(rows => {
+                this.waiting = rows.map(r => ({
+                    pointid: String(r.pointid),
+                    lineid: String(r.lineid),
+                    passingtimes: parse<STIB_MIVB_Passing[]>(r.passingtimes) ?? [],
+                }));
+                this.waitingLastFetched = Date.now();
+            })
         return this.waiting;
     }
 
