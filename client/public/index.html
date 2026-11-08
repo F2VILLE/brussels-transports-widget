@@ -1,17 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BTW - Brussels Transport Widget</title>
     <link rel="stylesheet" href="/style.css">
 </head>
+
 <body>
     <h1>BTW</h1>
+    <label for="fake">fake</label>
+    <input type="checkbox" name="fake" id="fake">
+
     <input type="number" name="distance" id="distance" value="100">
     <button id="checkBtn">Check Waiting Time</button>
     <div id="results"></div>
     <script src="/api_url.js" defer></script>
     <script src="/script.js" defer></script>
 </body>
+
 </html>
