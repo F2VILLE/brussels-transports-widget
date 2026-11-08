@@ -1,4 +1,4 @@
-const API_URL = `${window.location.protocol + "//" + (window.location.host.includes(":") ? window.location.host.split(":").shift() : window.location.host)}:3000`
+// const API_URL = `${window.location.protocol + "//" + (window.location.host.includes(":") ? window.location.host.split(":").shift() : window.location.host)}:3000`
 console.log(API_URL)
 
 const button = document.querySelector("#checkBtn")
