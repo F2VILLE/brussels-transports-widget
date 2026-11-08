@@ -7,7 +7,9 @@ const resultsDiv = document.querySelector("#results")
 
 let distance = 100;
 
+alert("TEST")
 
+resultsDiv.innerHTML = `API_URL: ${API_URL}`
 
 distanceInput.onchange = () => {
     distance = distanceInput.value
