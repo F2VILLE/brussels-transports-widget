@@ -12,6 +12,7 @@ export default function TabLayout() {
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       {/* <AnimatedSplashOverlay /> */}
       {/* <AppTabs /> */}
-      <Stack screenOptions={{ headerShown: false }} />    </ThemeProvider>
+      <Stack screenOptions={{ headerShown: false }} />
+    </ThemeProvider>
   );
 }

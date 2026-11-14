@@ -20,6 +20,7 @@ type Arrival = Awaited<ReturnType<STIB_MIVB["getLinesFromStop"]>>[number];
 
 router.get("/", async (req, res) => {
     const parsed = Query.safeParse(req.query)
+    console.log(`[REQ] /lines -> ${JSON.stringify(parsed)}`)
     if (!parsed.success)
         return res.status(400).json({ error: z.flattenError(parsed.error).fieldErrors });
     const { lat, lon, distance } = parsed.data
