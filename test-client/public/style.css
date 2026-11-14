@@ -1,0 +1,25 @@
+html {
+    padding: 20px;
+}
+
+body {
+    background-color: #191a36;
+    color: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+button {
+    background-color: #3e44fc;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 2px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:disabled {
+    background-color: #4044af;
+    color: #999;
+    cursor: progress;
+}
